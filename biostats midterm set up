@@ -1,0 +1,27 @@
+
+#midterm
+
+#import data
+beta_gludata <- read.csv("C:/Users/Pavel Codreanu/Downloads/midtermdata.csv")
+
+remove rows with empty follow up data
+gludata <- beta_gludata[complete.cases(beta_gludata), ]
+
+View(gludata)
+summary(gludata)
+
+#subsets galore
+
+ctrl <- subset(gludata, rand  == "control")
+m_ctrl <- subset(ctrl, sex == "M")
+f_ctrl <- subset (ctrl, sex == "F")
+int <- subset(gludata, rand  == "intervention")
+m_int <- subset(int, sex == "M")
+f_int <- subset (int, sex == "F")
+
+base_glu_ctrl <- ctrl$gluc.base.mgdl
+base_glu_int <- int$gluc.base.mgdl
+
+fu_glu_ctrl <- ctrl$gluc.follow.mgdl
+fu_glu_int  <- int$gluc.follow.mgdl
+
