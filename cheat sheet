@@ -1,0 +1,17 @@
+
+#pull data
+
+name <- read.csv("C:/objectdirectory")
+
+#point estimates and confidence intervals
+
+#continuous
+mean(object1) - mean(object2)
+mean(object1) - mean(object2) + 1.96*sqrt(((sd(object1)^2)/n1)+((sd(object2)^2)/n2))
+mean(object1) - mean(object2) - 1.96*sqrt(((sd(objectl)^2)/n1)+((sd(object2)^2)/n2))
+
+#dichotomous: p = probability
+p_object1 - p_object2
+p_object1 - p_object2 + 1.96*sqrt((p_object1*(1-p_object1)/n1)-((p_object2*(1-p_object2))/n2))
+p_object1 - p_object2 - 1.96*sqrt((p_object1*(1-p_object1)/n1)-((p_object2*(1-p_object2))/n2))
+
