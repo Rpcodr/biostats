@@ -4,11 +4,8 @@
 #import data
 beta_gludata <- read.csv("C:/Users/Pavel Codreanu/Downloads/midtermdata.csv")
 
-remove rows with empty follow up data
+#remove rows with empty follow up data
 gludata <- beta_gludata[complete.cases(beta_gludata), ]
-
-View(gludata)
-summary(gludata)
 
 #subsets galore
 
