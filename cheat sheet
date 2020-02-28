@@ -22,3 +22,5 @@ lm(formula = metric ~ metric, family = (binomal or gaussian), data = dataset
 #general linear model
 
 glm(formula = metric ~ metric, family = (binomal or gaussian), data = dataset
+
+#smaller AIC means better modelnews
