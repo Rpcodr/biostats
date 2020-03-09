@@ -1,24 +1,73 @@
 
-#midterm
-
-#import data
 beta_gludata <- read.csv("C:/Users/Pavel Codreanu/Downloads/midtermdata.csv")
 
-#remove rows with empty follow up data
+
+gludata_nonexcl <- beta_gludata
+nonexcl_ctrl <- subset(gludata_nonexcl, rand  == "control")
+nonexcl_int <- subset(gludata_nonexcl, rand  == "intervention")
+
+summary(nonexcl_ctrl$age)
+summary(nonexcl_int$age)
+
+mean(nonexcl_ctrl$age) - mean(nonexcl_int$age)
+mean(nonexcl_ctrl$age) - mean(nonexcl_int$age) + 1.96*sqrt(((sd(nonexcl_ctrl$age)^2)/71)+((sd(nonexcl_int$age)^2)/71))
+mean(nonexcl_ctrl$age) - mean(nonexcl_int$age) - 1.96*sqrt(((sd(nonexcl_ctrl$age)^2)/71)+((sd(nonexcl_int$age)^2)/71))
+
+
+summary(nonexcl_ctrl$sex)
+summary(nonexcl_int$sex)
+
+
+summary(nonexcl_ctrl$gluc.base.mgdl)
+summary(nonexcl_int$gluc.base.mgdl)
+
+mean(nonexcl_ctrl$gluc.base.mgdl) - mean(nonexcl_int$gluc.base.mgdl)
+mean(nonexcl_ctrl$gluc.base.mgdl) - mean(nonexcl_int$gluc.base.mgdl) + 1.96*sqrt(((sd(nonexcl_ctrl$gluc.base.mgdl)^2)/71)+((sd(nonexcl_int$gluc.base.mgdl)^2)/71))
+mean(nonexcl_ctrl$gluc.base.mgdl) - mean(nonexcl_int$gluc.base.mgdl) - 1.96*sqrt(((sd(nonexcl_ctrl$gluc.base.mgdl)^2)/71)+((sd(nonexcl_int$gluc.base.mgdl)^2)/71))
+
+
+nonexcl_thresh_base_ctrl <- subset(nonexcl_ctrl, gludata$gluc.base.mgdl >= 150)
+nonexcl_thresh_base_int <- subset(nonexcl_int, gludata$gluc.base.mgdl >= 150)
+
+summary(nonexcl_thresh_base_ctrl$gluc.base.mgdl)
+summary(nonexcl_thresh_base_int$gluc.base.mgdl)
+
+
+
 gludata <- beta_gludata[complete.cases(beta_gludata), ]
-
-#subsets galore
-
 ctrl <- subset(gludata, rand  == "control")
-m_ctrl <- subset(ctrl, sex == "M")
-f_ctrl <- subset (ctrl, sex == "F")
 int <- subset(gludata, rand  == "intervention")
-m_int <- subset(int, sex == "M")
-f_int <- subset (int, sex == "F")
 
 base_glu_ctrl <- ctrl$gluc.base.mgdl
 base_glu_int <- int$gluc.base.mgdl
-
 fu_glu_ctrl <- ctrl$gluc.follow.mgdl
 fu_glu_int  <- int$gluc.follow.mgdl
 
+
+summary(ctrl$age)
+summary(int$age)
+
+mean(ctrl$age) - mean(int$age)
+mean(ctrl$age) - mean(int$age) + 1.96*sqrt(((sd(ctrl$age)^2)/63)+((sd(int$age)^2)/56))
+mean(ctrl$age) - mean(int$age) - 1.96*sqrt(((sd(ctrl$age)^2)/63)+((sd(int$age)^2)/56))
+
+
+summary(ctrl$sex)
+summary(int$sex)
+
+
+summary(ctrl$gluc.base.mgdl)
+summary(int$gluc.base.mgdl)
+
+mean(base_glu_ctrl) - mean(base_glu_int)
+mean(base_glu_ctrl) - mean(base_glu_int) + 1.96*sqrt(((sd(base_glu_ctrl)^2)/63)+((sd(base_glu_int)^2)/56))
+mean(base_glu_ctrl) - mean(base_glu_int) - 1.96*sqrt(((sd(base_glu_ctrl)^2)/63)+((sd(base_glu_int)^2)/56))
+
+
+thresh_base_ctrl <- subset(ctrl, gludata$gluc.base.mgdl >= 150)
+thresh_base_int <- subset(int, gludata$gluc.base.mgdl >= 150)
+
+summary(thresh_base_ctrl$gluc.base.mgdl)
+summary(thresh_base_int$gluc.base.mgdl)
+
+gludata$delta <- gludata$gluc.follow.mgdl - gludata$gluc.base.mgdl
