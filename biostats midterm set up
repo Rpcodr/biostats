@@ -1,10 +1,50 @@
+#midterm
 
+#read in data, note that there are missing endpoint data
 beta_gludata <- read.csv("C:/Users/Pavel Codreanu/Downloads/midtermdata.csv")
 
 
+# create objects that do not exclude missing data to verify randomization later...
+# includes dichotomized baseline glucose, randomization groups
 gludata_nonexcl <- beta_gludata
+gludata_nonexcl$thresh <- (gludata_nonexcl$gluc.base.mgdl >= 150)
+
 nonexcl_ctrl <- subset(gludata_nonexcl, rand  == "control")
 nonexcl_int <- subset(gludata_nonexcl, rand  == "intervention")
+
+
+#exclude incomplete cases
+gludata <- beta_gludata[complete.cases(beta_gludata), ]
+
+#designate threshold baseline glucose as dichotomous data point with missing endpoints exluded
+gludata$thresh <- (gludata$gluc.base.mgdl >= 150)
+gludata$delta <- gludata$gluc.follow.mgdl - gludata$gluc.base.mgdl
+
+# designate randomization group
+ctrl <- subset(gludata, rand  == "control")
+int <- subset(gludata, rand  == "intervention")
+
+# create change in glucose level data point, includes dicho
+ctrl$delta <- ctrl$gluc.follow.mgdl - ctrl$gluc.base.mgdl
+int$delta <- int$gluc.follow.mgdl - int$gluc.base.mgdl
+
+
+# create threshold groups in both randomization arms
+thresh_ctrl_beta <- subset(ctrl, gludata$gluc.base.mgdl >= 150)
+thresh_int_beta <- subset(int, gludata$gluc.base.mgdl >= 150)
+
+thresh_ctrl <- thresh_ctrl_beta[complete.cases(thresh_ctrl_beta), ]
+thresh_int <- thresh_int_beta[complete.cases(thresh_int_beta), ]
+
+# subsets by sex
+female <- subset(gludata, sex == "F")
+male <- subset(gludata, sex == "M")
+
+
+
+
+# randomization verification of complete data
+
 
 summary(nonexcl_ctrl$age)
 summary(nonexcl_int$age)
@@ -16,6 +56,7 @@ mean(nonexcl_ctrl$age) - mean(nonexcl_int$age) - 1.96*sqrt(((sd(nonexcl_ctrl$age
 
 summary(nonexcl_ctrl$sex)
 summary(nonexcl_int$sex)
+chisq.test(gludata_nonexcl$sex, gludata_nonexcl$rand)
 
 
 summary(nonexcl_ctrl$gluc.base.mgdl)
@@ -26,23 +67,10 @@ mean(nonexcl_ctrl$gluc.base.mgdl) - mean(nonexcl_int$gluc.base.mgdl) + 1.96*sqrt
 mean(nonexcl_ctrl$gluc.base.mgdl) - mean(nonexcl_int$gluc.base.mgdl) - 1.96*sqrt(((sd(nonexcl_ctrl$gluc.base.mgdl)^2)/71)+((sd(nonexcl_int$gluc.base.mgdl)^2)/71))
 
 
-nonexcl_thresh_base_ctrl <- subset(nonexcl_ctrl, gludata$gluc.base.mgdl >= 150)
-nonexcl_thresh_base_int <- subset(nonexcl_int, gludata$gluc.base.mgdl >= 150)
-
-summary(nonexcl_thresh_base_ctrl$gluc.base.mgdl)
-summary(nonexcl_thresh_base_int$gluc.base.mgdl)
+chisq.test(gludata_nonexcl$thresh, gludata_nonexcl$rand)
 
 
-
-gludata <- beta_gludata[complete.cases(beta_gludata), ]
-ctrl <- subset(gludata, rand  == "control")
-int <- subset(gludata, rand  == "intervention")
-
-base_glu_ctrl <- ctrl$gluc.base.mgdl
-base_glu_int <- int$gluc.base.mgdl
-fu_glu_ctrl <- ctrl$gluc.follow.mgdl
-fu_glu_int  <- int$gluc.follow.mgdl
-
+# exclusionary verification of randomization
 
 summary(ctrl$age)
 summary(int$age)
@@ -54,20 +82,16 @@ mean(ctrl$age) - mean(int$age) - 1.96*sqrt(((sd(ctrl$age)^2)/63)+((sd(int$age)^2
 
 summary(ctrl$sex)
 summary(int$sex)
+chisq.test(gludata$sex, gludata$rand)
 
 
 summary(ctrl$gluc.base.mgdl)
 summary(int$gluc.base.mgdl)
 
-mean(base_glu_ctrl) - mean(base_glu_int)
-mean(base_glu_ctrl) - mean(base_glu_int) + 1.96*sqrt(((sd(base_glu_ctrl)^2)/63)+((sd(base_glu_int)^2)/56))
-mean(base_glu_ctrl) - mean(base_glu_int) - 1.96*sqrt(((sd(base_glu_ctrl)^2)/63)+((sd(base_glu_int)^2)/56))
+mean(ctrl$gluc.base.mgdl) - mean(int$gluc.base.mgdl)
+mean(ctrl$gluc.base.mgdl) - mean(int$gluc.base.mgdl) + 1.96*sqrt(((sd(ctrl$gluc.base.mgdl)^2)/63)+((sd(int$gluc.base.mgdl)^2)/56))
+mean(ctrl$gluc.base.mgdl) - mean(int$gluc.base.mgdl) - 1.96*sqrt(((sd(ctrl$gluc.base.mgdl)^2)/63)+((sd(int$gluc.base.mgdl)^2)/56))
+
+chisq.test(gludata$thresh, gludata$rand)
 
 
-thresh_base_ctrl <- subset(ctrl, gludata$gluc.base.mgdl >= 150)
-thresh_base_int <- subset(int, gludata$gluc.base.mgdl >= 150)
-
-summary(thresh_base_ctrl$gluc.base.mgdl)
-summary(thresh_base_int$gluc.base.mgdl)
-
-gludata$delta <- gludata$gluc.follow.mgdl - gludata$gluc.base.mgdl
