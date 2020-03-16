@@ -18,6 +18,13 @@ gludata <- beta_gludata[complete.cases(beta_gludata), ]
 
 #designate threshold baseline glucose as dichotomous data point with missing endpoints exluded
 gludata$thresh <- (gludata$gluc.base.mgdl >= 150)
+
+# verify threshold
+boxplot(gludata$gluc.base.mgdl ~ gludata$thresh, 
+        main = "Dichotimization of baseline glucose", 
+        xlab = "Threshold", ylab = "Baseline Glucose, mg/dl")
+abline(h = 150, lwd = 2, col = "red")
+
 gludata$delta <- gludata$gluc.follow.mgdl - gludata$gluc.base.mgdl
 
 # designate randomization group
@@ -93,5 +100,4 @@ mean(ctrl$gluc.base.mgdl) - mean(int$gluc.base.mgdl) + 1.96*sqrt(((sd(ctrl$gluc.
 mean(ctrl$gluc.base.mgdl) - mean(int$gluc.base.mgdl) - 1.96*sqrt(((sd(ctrl$gluc.base.mgdl)^2)/63)+((sd(int$gluc.base.mgdl)^2)/56))
 
 chisq.test(gludata$thresh, gludata$rand)
-
 
