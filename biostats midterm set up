@@ -31,10 +31,6 @@ gludata$delta <- gludata$gluc.follow.mgdl - gludata$gluc.base.mgdl
 ctrl <- subset(gludata, rand  == "control")
 int <- subset(gludata, rand  == "intervention")
 
-# create change in glucose level data point, includes dicho
-ctrl$delta <- ctrl$gluc.follow.mgdl - ctrl$gluc.base.mgdl
-int$delta <- int$gluc.follow.mgdl - int$gluc.base.mgdl
-
 
 # create threshold groups in both randomization arms
 thresh_ctrl_beta <- subset(ctrl, gludata$gluc.base.mgdl >= 150)
@@ -59,7 +55,7 @@ summary(nonexcl_int$age)
 mean(nonexcl_ctrl$age) - mean(nonexcl_int$age)
 mean(nonexcl_ctrl$age) - mean(nonexcl_int$age) + 1.96*sqrt(((sd(nonexcl_ctrl$age)^2)/71)+((sd(nonexcl_int$age)^2)/71))
 mean(nonexcl_ctrl$age) - mean(nonexcl_int$age) - 1.96*sqrt(((sd(nonexcl_ctrl$age)^2)/71)+((sd(nonexcl_int$age)^2)/71))
-
+t.test(gludata_nonexcl$age ~ gludata_nonexcl$rand, data = gludata_nonexcl)
 
 summary(nonexcl_ctrl$sex)
 summary(nonexcl_int$sex)
@@ -72,9 +68,13 @@ summary(nonexcl_int$gluc.base.mgdl)
 mean(nonexcl_ctrl$gluc.base.mgdl) - mean(nonexcl_int$gluc.base.mgdl)
 mean(nonexcl_ctrl$gluc.base.mgdl) - mean(nonexcl_int$gluc.base.mgdl) + 1.96*sqrt(((sd(nonexcl_ctrl$gluc.base.mgdl)^2)/71)+((sd(nonexcl_int$gluc.base.mgdl)^2)/71))
 mean(nonexcl_ctrl$gluc.base.mgdl) - mean(nonexcl_int$gluc.base.mgdl) - 1.96*sqrt(((sd(nonexcl_ctrl$gluc.base.mgdl)^2)/71)+((sd(nonexcl_int$gluc.base.mgdl)^2)/71))
+t.test(gludata_nonexcl$gluc.base.mgdl ~ gludata_nonexcl$rand, data = gludata_nonexcl)
 
 
-chisq.test(gludata_nonexcl$thresh, gludata_nonexcl$rand)
+
+thresh_nonexcl_ctrl <- subset(nonexcl_ctrl, nonexcl_ctrl$thresh == "TRUE")
+thresh_nonexcl_int <- subset(nonexcl_int, nonexcl_int$thresh == "TRUE")
+chisq.test(gludata_nonexcl$rand, gludata_nonexcl$thresh)
 
 
 # exclusionary verification of randomization
@@ -85,7 +85,7 @@ summary(int$age)
 mean(ctrl$age) - mean(int$age)
 mean(ctrl$age) - mean(int$age) + 1.96*sqrt(((sd(ctrl$age)^2)/63)+((sd(int$age)^2)/56))
 mean(ctrl$age) - mean(int$age) - 1.96*sqrt(((sd(ctrl$age)^2)/63)+((sd(int$age)^2)/56))
-
+t.test(gludata$age ~ gludata$rand, data = gludata)
 
 summary(ctrl$sex)
 summary(int$sex)
@@ -98,6 +98,119 @@ summary(int$gluc.base.mgdl)
 mean(ctrl$gluc.base.mgdl) - mean(int$gluc.base.mgdl)
 mean(ctrl$gluc.base.mgdl) - mean(int$gluc.base.mgdl) + 1.96*sqrt(((sd(ctrl$gluc.base.mgdl)^2)/63)+((sd(int$gluc.base.mgdl)^2)/56))
 mean(ctrl$gluc.base.mgdl) - mean(int$gluc.base.mgdl) - 1.96*sqrt(((sd(ctrl$gluc.base.mgdl)^2)/63)+((sd(int$gluc.base.mgdl)^2)/56))
+t.test(gludata$gluc.base.mgdl ~ gludata$rand, data = gludata)
+
 
 chisq.test(gludata$thresh, gludata$rand)
+
+
+
+#associations between demographics and glucose
+
+#by age
+
+cor(gludata$age, gludata$gluc.base.mgdl)
+cor(gludata$age, gludata$delta)
+
+plot(gludata$age, gludata$gluc.base.mgdl, main = "Correlation between age and glucose", pch = 16, las = 1, cex = .7, col = "blue")
+lines(lowess(gludata$age, gludata$gluc.base.mgdl), col = "blue")
+points(gludata$age, gludata$gluc.follow.mgdl, pch = 17, las = 1, cex = .7, col = "red")
+lines(lowess(gludata$age, gludata$gluc.follow.mgdl), col = "red")
+
+plot(gludata$age, gludata$delta)
+lines(lowess(gludata$age, gludata$delta))
+
+
+
+#by sex
+
+mean(female$gluc.base.mgdl) - mean(male$gluc.base.mgdl)
+mean(female$gluc.base.mgdl) - mean(male$gluc.base.mgdl) + 1.96*sqrt(((sd(female$gluc.base.mgdl)^2)/56)+((sd(male$gluc.base.mgdl)^2)/63))
+mean(female$gluc.base.mgdl) - mean(male$gluc.base.mgdl) - 1.96*sqrt(((sd(female$gluc.base.mgdl)^2)/56)+((sd(male$gluc.base.mgdl)^2)/63))
+t.test(gludata$gluc.base.mgdl ~ gludata$sex, data = gludata)
+
+cor(female$age, female$gluc.base.mgdl)
+cor(female$age, female$delta)
+
+cor(male$age, male$gluc.base.mgdl)
+cor(male$age, male$delta)
+
+plot(female$age, female$gluc.base.mgdl, main = "correlation between age and baseline glucose by sex", pch = 16, las = 1, cex = .7, col = "red")
+lines(lowess(female$age, female$gluc.base.mgdl), col = "red")
+points(male$age, male$gluc.base.mgdl, pch = 17, las = 1, cex = .7, col = "blue")
+lines(lowess(male$age, male$gluc.base.mgdl), col = "blue")
+
+
+
+plot(female$age, female$gluc.follow.mgdl, main = "correlation between age and follow up glucose by sex", pch = 16, las = 1, cex = .7, col = "red")
+lines(lowess(female$age, female$gluc.follow.mgdl), col = "red")
+points(male$age, male$gluc.follow.mgdl, pch = 17, las = 1, cex = .7, col = "blue")
+lines(lowess(male$age, male$gluc.follow.mgdl), col = "blue")
+
+
+plot(female$age, female$delta, main = "correlation between age and delta by sex", pch = 16, las = 1, cex = .7, col = "red")
+lines(lowess(female$age, female$delta), col = "red")
+points(male$age, male$delta, pch = 17, las = 1, cex = .7, col = "blue")
+lines(lowess(male$age, male$delta), col = "blue")
+
+
+#analyze change in glucose between intervention groups
+
+mean(int$delta) - mean(ctrl$delta)
+mean(int$delta) - mean(ctrl$delta) + 1.96*sqrt(((sd(int$delta)^2)/56)+((sd(ctrl$delta)^2)/63))
+mean(int$delta) - mean(ctrl$delta) - 1.96*sqrt(((sd(int$delta)^2)/56)+((sd(ctrl$delta)^2)/63))
+t.test(ctrl$delta, int$delta)
+# consider negative changes (increase from baseline after 60 days)
+# a negative delta shows improvement, select subjects with negative delta
+
+improved <- subset(gludata, delta <= 0)
+f_improved <- subset(improved, sex == "F")
+m_improved <- subset(improved, sex == "M")
+
+plot(improved$age, improved$delta, main = "correlation between improvement and age")
+lines(lowess(improved$age, improved$delta))
+
+#by sex
+
+plot(f_improved$age, f_improved$delta, main = "correlation between improvement and age by sex", pch = 16, las = 1, cex = .7, col = "red")
+lines(lowess(f_improved$age, f_improved$delta), col = "red")
+points(m_improved$age, m_improved$delta, pch = 17, las = 1, cex = .7, col = "blue")
+lines(lowess(m_improved$age, m_improved$delta), col = "blue")
+
+
+
+#linear models
+
+
+lm1_f <- lm(delta ~ rand, data = female)
+summary(lm1_f)
+lm1_m <- lm(delta ~ rand, data = male)
+summary(lm1_m)
+
+
+
+
+lm.rand <- lm(delta ~ rand, data = gludata)
+summary(lmrand)
+lm.rand.age.sex <- lm(delta ~ rand + age + sex, data = gludata)
+summary(lm.rand.age.sex)
+lm.age.rand.by.sex <- lm(delta ~ age + rand*sex, data = gludata)
+summary(lm.age.rand.by.sex)
+
+lm.thresh <- lm(delta ~ thresh, data = gludata)
+summary(lm.thresh)
+
+
+mean(ctrl$age)
+mean(ctrl_thresh$age)
+mean(int$age)
+mean(int_thresh$age)
+
+
+lm.rand.thresh <- lm(delta ~ rand + thresh, data = gludata)
+summary(lm.rand.thresh)
+lm.rand.age.sex.thresh <- lm(delta ~ rand + age + sex + thresh, data = gludata)
+summary(lm.rand.age.sex.thresh)
+lm.age.rand.by.sex.thresh <- lm(delta ~ age + rand*sex + thresh, data = gludata)
+summary(lm.age.rand.by.sex.thresh)
 
